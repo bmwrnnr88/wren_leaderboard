@@ -11,7 +11,7 @@ def load_data():
         with open(DATA_FILE, 'r') as f:
             data = json.load(f)
     except FileNotFoundError:
-        data = {'main_title': "Mr. Ward's Leaderboard", 'title': "Top 5 Scores", 'scores': []}
+        data = {'main_title': "Wren English Mafia Leaderboard", 'title': "Top 5 Scores", 'scores': []}
     return data
 
 # Initialize the data
