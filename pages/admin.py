@@ -32,14 +32,6 @@ if st.button("Update Main Title"):
     save_data(data)
     st.success(f"Updated main title to: {new_main_title}")
 
-# Section to change the subtitle (optional, if needed)
-# st.header("Update Leaderboard Title")
-# new_title = st.text_input("Leaderboard Title", data['title'])
-# if st.button("Update Title"):
-#     data['title'] = new_title
-#     save_data(data)
-#     st.success(f"Updated title to: {new_title}")
-
 st.header("Enter New Score")
 name = st.text_input("Student Name")
 score = st.number_input("Score", min_value=0.0, max_value=100.0, step=0.1, format="%.1f")
@@ -52,7 +44,32 @@ if st.button("Add Score"):
     else:
         st.error("Please enter both name and score")
 
-# Option to clear scores
+# Display current scores and provide options to edit or delete
+st.header("Current Scores")
+if data['scores']:
+    df = pd.DataFrame(data['scores'])
+    df = df.sort_values(by='score', ascending=False).reset_index(drop=True)
+    st.dataframe(df)
+
+    # Provide edit and delete options
+    for idx, row in df.iterrows():
+        st.subheader(f"Edit Score for {row['name']} ({row['score']})")
+        new_name = st.text_input(f"New Name for {row['name']}", value=row['name'], key=f"name_{idx}")
+        new_score = st.number_input(f"New Score for {row['name']}", min_value=0.0, max_value=100.0, value=row['score'], step=0.1, key=f"score_{idx}")
+
+        if st.button(f"Update {row['name']}", key=f"update_{idx}"):
+            data['scores'][idx]['name'] = new_name
+            data['scores'][idx]['score'] = new_score
+            save_data(data)
+            st.success(f"Updated {new_name} with score {new_score}")
+
+        if st.button(f"Delete {row['name']}", key=f"delete_{idx}"):
+            data['scores'].pop(idx)
+            save_data(data)
+            st.success(f"Deleted {row['name']}")
+            st.experimental_rerun()
+
+# Option to clear all scores
 if st.button("Clear All Scores"):
     data['scores'] = []
     save_data(data)
